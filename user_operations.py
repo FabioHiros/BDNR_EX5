@@ -1,4 +1,3 @@
-# user_operations.py - User operations in Neo4j
 
 import uuid
 
@@ -22,10 +21,10 @@ def insert_user(driver, name, last_name, email, cpf, password, addresses=None, i
     Returns:
         str: ID of the created user, or None if creation failed
     """
-    # Generate unique ID
+   
     user_id = str(uuid.uuid4())
     
-    # Create user properties
+ 
     user_props = {
         'id': user_id,
         'name': name,
@@ -36,12 +35,12 @@ def insert_user(driver, name, last_name, email, cpf, password, addresses=None, i
         'isSeller': is_seller
     }
     
-    # Add seller properties if applicable
+  
     if is_seller and company_name and cnpj:
         user_props['companyName'] = company_name
         user_props['cnpj'] = cnpj
     
-    # Create user node
+   
     query = """
     CREATE (u:User $props)
     RETURN u.id
@@ -52,7 +51,7 @@ def insert_user(driver, name, last_name, email, cpf, password, addresses=None, i
     if not result:
         return None
     
-    # Create address nodes if provided
+   
     if addresses:
         for address in addresses:
             add_user_address(driver, user_id, 
@@ -67,7 +66,7 @@ def insert_user(driver, name, last_name, email, cpf, password, addresses=None, i
 
 def add_user_address(driver, user_id, street, number, neighborhood, state, zip_code):
     """Add an address to a user"""
-    # Create address properties
+   
     address_props = {
         'street': street,
         'number': number,
@@ -76,7 +75,7 @@ def add_user_address(driver, user_id, street, number, neighborhood, state, zip_c
         'zipCode': zip_code
     }
     
-    # Create address node and relationship
+   
     query = """
     MATCH (u:User {id: $userId})
     CREATE (a:Address $addressProps)

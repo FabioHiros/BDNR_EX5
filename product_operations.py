@@ -1,13 +1,12 @@
-# product_operations.py - Product operations in Neo4j
 
 import uuid
 
 def insert_product(driver, name, description, brand, price, stock, rating, seller_cpf=None):
     """Insert a product into Neo4j"""
-    # Generate unique ID
+ 
     product_id = str(uuid.uuid4())
     
-    # Create product properties
+   
     product_props = {
         'id': product_id,
         'name': name,
@@ -18,7 +17,7 @@ def insert_product(driver, name, description, brand, price, stock, rating, selle
         'rating': float(rating)
     }
     
-    # Create product node
+   
     query = """
     CREATE (p:Product $props)
     RETURN p.id
@@ -29,9 +28,9 @@ def insert_product(driver, name, description, brand, price, stock, rating, selle
     if not result:
         return None
     
-    # Create relationship to seller if CPF is provided
+   
     if seller_cpf:
-        # First, find the seller by CPF
+        
         find_seller_query = """
         MATCH (u:User {cpf: $cpf})
         RETURN u.id
@@ -42,7 +41,7 @@ def insert_product(driver, name, description, brand, price, stock, rating, selle
         if seller_result and seller_result[0]:
             seller_id = seller_result[0][0]
             
-            # Store seller ID in product
+           
             update_product_query = """
             MATCH (p:Product {id: $productId})
             SET p.sellerId = $sellerId
@@ -50,7 +49,7 @@ def insert_product(driver, name, description, brand, price, stock, rating, selle
             
             driver.run_query(update_product_query, {'productId': product_id, 'sellerId': seller_id})
             
-            # Create SELLS relationship
+           
             seller_query = """
             MATCH (u:User {id: $sellerId}), (p:Product {id: $productId})
             CREATE (u)-[:SELLS]->(p)

@@ -1,8 +1,7 @@
-# favorite_operations.py - Simple favorite operations
 
 def add_favorite(driver, user_cpf, product_id):
     """Add a favorite relationship between user and product"""
-    # Find user by CPF
+   
     user_query = """
     MATCH (u:User {cpf: $cpf})
     RETURN u.id, u.name
@@ -16,7 +15,7 @@ def add_favorite(driver, user_cpf, product_id):
     
     user_id = user_result[0][0]
     
-    # Create favorite relationship
+   
     favorite_query = """
     MATCH (u:User {id: $userId}), (p:Product {id: $productId})
     MERGE (u)-[:FAVORITE]->(p)

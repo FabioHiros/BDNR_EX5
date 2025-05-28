@@ -1,4 +1,3 @@
-# order_operations.py - Order operations in Neo4j
 
 import uuid
 from datetime import datetime
@@ -15,7 +14,7 @@ def create_order(driver, buyer_cpf, products):
     Returns:
         str: ID of the created order, or None if creation failed
     """
-    # Find buyer by CPF
+ 
     find_buyer_query = """
     MATCH (u:User {cpf: $cpf})
     RETURN u.id
@@ -29,7 +28,7 @@ def create_order(driver, buyer_cpf, products):
     
     buyer_id = buyer_result[0][0]
     
-    # Generate unique order ID
+ 
     order_id = str(uuid.uuid4())
     
     # Calculate total value and prepare products for the order
@@ -40,7 +39,7 @@ def create_order(driver, buyer_cpf, products):
         product_id = product_entry['product_id']
         quantity = product_entry['quantity']
         
-        # Get product info
+    
         product_query = """
         MATCH (p:Product {id: $productId})
         RETURN p.name, p.price
@@ -67,8 +66,7 @@ def create_order(driver, buyer_cpf, products):
     if not order_products:
         print("No valid products for the order")
         return None
-    
-    # Create order node
+   
     order_props = {
         'id': order_id,
         'value': total_value,
@@ -88,7 +86,7 @@ def create_order(driver, buyer_cpf, products):
         print("Failed to create order")
         return None
     
-    # Create relationship between buyer and order
+   
     buyer_order_query = """
     MATCH (u:User {id: $buyerId}), (o:Order {id: $orderId})
     CREATE (u)-[:ORDERED]->(o)
@@ -96,7 +94,7 @@ def create_order(driver, buyer_cpf, products):
     
     driver.run_query(buyer_order_query, {'buyerId': buyer_id, 'orderId': order_id})
     
-    # Create relationships between order and products
+  
     for product in order_products:
         product_order_query = """
         MATCH (o:Order {id: $orderId}), (p:Product {id: $productId})
@@ -109,7 +107,7 @@ def create_order(driver, buyer_cpf, products):
             'quantity': product['quantity']
         })
         
-        # Update product stock
+     
         update_stock_query = """
         MATCH (p:Product {id: $productId})
         SET p.stock = p.stock - $quantity

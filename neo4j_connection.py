@@ -1,4 +1,3 @@
-# neo4j_connection.py - Connection to Neo4j database
 
 from neo4j import GraphDatabase
 
@@ -20,10 +19,10 @@ class Neo4jConnection:
 
 def connect_neo4j():
     """Connect to Neo4j database"""
-    # Neo4j credentials
-    uri = "neo4j+ssc://9154980e.databases.neo4j.io"
+  
+    uri = "neo4j+ssc://8a569689.databases.neo4j.io"
     user = "neo4j"
-    password = "Swczi7RbebigwcZvXyDA0vRt22jEOPWChVBBKkkajsA"
+    password = "n6zO8HsnKL-CffsF6DmzHlT5BPGNfNWGzUzYuVfIX_k"
     
     try:
         conn = Neo4jConnection(uri, user, password)

@@ -1,4 +1,3 @@
-# main.py - Main entry point for the Neo4j e-commerce system
 
 from neo4j_connection import connect_neo4j, close_connection
 from user_operations import insert_user
@@ -11,12 +10,12 @@ from product_operations import (
 from order_operations import create_order, get_all_products, get_user_orders, get_order_products
 from favorite_operations import add_favorite, get_user_favorites, get_all_products as get_all_products_favorites, remove_favorite
 
-# Resolve name conflict with get_all_products
+
 get_all_products_for_favorites = get_all_products_favorites
 
 
 def mainMenu():
-    # Connect to Neo4j
+
     driver = connect_neo4j()
     if not driver:
         print("Failed to connect to Neo4j. Please check your connection settings.")
@@ -66,7 +65,7 @@ def userMenu(driver):
                 cpf = input("CPF: ")
                 password = input("Senha: ")
                 
-                # Collect addresses
+             
                 addresses = []
                 add_address = input("Adicionar endereço? (S/N): ").upper() == 'S'
                 
@@ -183,10 +182,10 @@ def orderMenu(driver):
 
         match option:
             case '1':
-                # Create a new order
+          
                 buyer_cpf = input("CPF do comprador: ")
                 
-                # Check if buyer exists
+                
                 find_buyer_query = """
                 MATCH (u:User {cpf: $cpf})
                 RETURN u.id, u.name, u.lastName
@@ -201,14 +200,14 @@ def orderMenu(driver):
                 buyer_name = f"{buyer_result[0][1]} {buyer_result[0][2]}"
                 print(f"Comprador: {buyer_name}")
                 
-                # Get all available products
+               
                 products = get_all_products(driver)
                 
                 if not products:
                     print("Não há produtos disponíveis!")
                     continue
                 
-                # Display products and let user select
+                
                 order_products = []
                 
                 while True:
@@ -223,13 +222,12 @@ def orderMenu(driver):
                         print(f"{idx:<3} {name:<30} {brand:<15} R$ {product['price']:<7.2f} {product['stock']:<8}")
                     
                     print("-" * 80)
-                    
-                    # Select product
+                   
                     try:
                         product_idx = int(input("\nSelecione o número do produto (0 para finalizar): "))
                         
                         if product_idx == 0:
-                            # Finished selecting products
+                           
                             break
                         
                         if product_idx < 1 or product_idx > len(products):
@@ -238,7 +236,6 @@ def orderMenu(driver):
                         
                         selected_product = products[product_idx - 1]
                         
-                        # Get quantity
                         max_quantity = selected_product['stock']
                         quantity = input(f"Quantidade (máx {max_quantity}): ")
                         
@@ -257,7 +254,7 @@ def orderMenu(driver):
                                 print("Quantidade inválida!")
                                 continue
                         
-                        # Add to order
+                       
                         order_products.append({
                             'product_id': selected_product['id'],
                             'quantity': quantity
@@ -265,7 +262,6 @@ def orderMenu(driver):
                         
                         print(f"{quantity}x {selected_product['name']} adicionado ao pedido")
                         
-                        # Remove or update the product in the list
                         if quantity == max_quantity:
                             products.pop(product_idx - 1)
                         else:
@@ -274,7 +270,7 @@ def orderMenu(driver):
                     except ValueError:
                         print("Entrada inválida!")
                 
-                # Create the order if products were selected
+                
                 if order_products:
                     order_id = create_order(driver, buyer_cpf, order_products)
                     
@@ -286,7 +282,7 @@ def orderMenu(driver):
                     print("Nenhum produto selecionado. Pedido cancelado.")
             
             case '2':
-                # View customer orders
+              
                 buyer_cpf = input("CPF do cliente: ")
                 
                 orders = get_user_orders(driver, buyer_cpf)
@@ -306,7 +302,7 @@ def orderMenu(driver):
                 print("-" * 80)
             
             case '3':
-                # View order details
+               
                 order_id = input("ID do pedido: ")
                 
                 products = get_order_products(driver, order_id)
@@ -349,7 +345,7 @@ def favoriteMenu(driver):
 
         match option:
             case '1':
-                # 1. Show all products
+                
                 products = get_all_products(driver)
                 
                 if not products:
@@ -368,7 +364,7 @@ def favoriteMenu(driver):
                 
                 print("-" * 80)
                 
-                # 2. Select product
+                
                 try:
                     product_idx = int(input("\nSelecione o número do produto: "))
                     
@@ -378,10 +374,9 @@ def favoriteMenu(driver):
                     
                     selected_product = products[product_idx - 1]
                     
-                    # 3. Ask for user CPF
+                   
                     user_cpf = input("Digite o CPF do usuário: ")
                     
-                    # 4. Add to favorites
                     success = add_favorite(driver, user_cpf, selected_product['id'])
                     
                     if success:
@@ -391,7 +386,7 @@ def favoriteMenu(driver):
                     print("Entrada inválida!")
             
             case '2':
-                # View user's favorites
+              
                 user_cpf = input("Digite seu CPF: ")
                 
                 favorites = get_user_favorites(driver, user_cpf)
@@ -413,7 +408,7 @@ def favoriteMenu(driver):
                 print("-" * 80)
             
             case '3':
-                # Remove from favorites
+               
                 user_cpf = input("Digite seu CPF: ")
                 
                 favorites = get_user_favorites(driver, user_cpf)
@@ -434,7 +429,7 @@ def favoriteMenu(driver):
                 
                 print("-" * 80)
                 
-                # Select product to remove
+             
                 try:
                     product_idx = int(input("\nSelecione o número do produto a remover: "))
                     
@@ -444,7 +439,7 @@ def favoriteMenu(driver):
                     
                     selected_product = favorites[product_idx - 1]
                     
-                    # Remove from favorites
+                  
                     success = remove_favorite(driver, user_cpf, selected_product['id'])
                     
                     if success:
